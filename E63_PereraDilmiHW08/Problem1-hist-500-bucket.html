@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font: 15px sans-serif;
+}
+.d3-tip {
+        line-height: 1;
+        font-weight: bold;
+        padding: 12px;
+        background: rgba(0, 0, 0, 0.8);
+        color: #fff;
+        border-radius: 2px;
+      }
+.bar rect {
+        fill: steelblue;
+        shape-rendering: crispEdges;
+      }
+.bar rect:hover{
+fill: rgba(0,0,0,.8);
+}
+.axis path, .axis line {
+fill: none;
+stroke: #000;
+shape-rendering: crispEdges;
+}
+</style>
+<body>
+
+  <h1>Bar Chart - Histogram of global spending on health per citizen</h1>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script src="http://labratrevenge.com/d3-tip/javascripts/d3.tip.v0.6.3.js"></script>
+<script>
+
+
+
+// A formatter for counts.
+var formatCount = d3.format(",.0f");
+
+var margin = {top: 10, right: 30, bottom: 40, left: 50},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+
+var x = d3.scale.linear()
+    .domain([0, 8500])
+    .range([0, width]);	
+// Generate a histogram using uniformly-spaced bins of 200.
+
+//var data = [ 60,26,22,8,13,11,4,9,1,2,4,2,1,0,3,3,4,3,2,0,2,2,2,0,0,1,1,1,0,1,0,0,0,1,0,0,0,0,0,0,0,1 ];
+var toolTips = [""]
+
+var values= [44,577,330,3254,168,991,1287,239,3441,4388,579,1988,1083,57,1523,786,4025,378,65,275,233,972,1145,1028,1449,947,93,47,121,122,4404,184,31,62,1199,379,713,49,104,416,1242,1514,431,1842,2051,98,27,4537,170,731,578,653,289,450,1545,16,1226,51,198,3281,4021,522,80,522,4332,85,2853,594,325,56,100,167,76,263,1469,3279,132,112,836,340,3704,2186,3022,372,3204,448,541,78,258,1132,140,97,1092,980,170,49,713,1300,6743,36,65,641,464,56,2261,377,79,803,959,451,5949,218,1155,246,49,34,436,264,66,5038,3020,253,37,121,3574,5426,598,59,1409,1123,88,302,481,142,1476,2818,1622,2023,360,811,998,121,868,804,466,283,2853,142,968,109,1169,785,107,2273,2060,2552,227,935,3027,148,141,523,333,3757,5394,174,128,330,791,84,77,229,1449,483,1029,199,473,124,519,1544,3480,83,8362,1188,184,240,589,215,122,90];
+var data = d3.layout.histogram()
+    .bins(x.ticks(17))
+    (values);
+	
+
+
+var y = d3.scale.linear()
+    .domain([0, d3.max(data, function(d) { return d.y; })])
+    .range([height, 0]);
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+	
+var yAxis = d3.svg.axis()
+	.scale(y)
+	.ticks(8)
+	.orient("left");
+	
+	var tip = d3.tip()
+	  .attr('class', 'd3-tip')
+	  .direction('e')
+	  .offset([0, 20])
+	  .html(function(d) {
+	    return '<table id="tiptable">' + d.meta + "</table>";
+	});
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var bar = svg.selectAll(".bar")
+    .data(data)
+  .enter().append("g")
+    .attr("class", "bar")
+    .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
+
+bar.append("rect")
+    .attr("x", 1)
+    .attr("width", x(data[0].dx) - 1)
+    .attr("height", function(d) { return height - y(d.y); });
+
+// add the x axis and x-label
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis);
+	svg.append("text")
+	  .attr("class", "xlabel")
+	  .attr("text-anchor", "middle")
+	  .attr("x", width / 2)
+	  .attr("y", height + margin.bottom-5)
+	  .text("Spending on health per capita");
+	
+// add the y axis and y-label
+svg.append("g")
+  .attr("class", "y axis")
+  .attr("transform", "translate(0,0)")
+  .call(yAxis);
+  svg.append("text")
+	  .attr("class", "ylabel")
+	  .attr("y", 0 - margin.left-2) // x and y switched due to rotation
+	  .attr("x", 0 - (height / 2))
+	  .attr("dy", "1em")
+	  .attr("transform", "rotate(-90)")
+	  .style("text-anchor", "middle")
+	  .text("Frequency(Number of Countries");
+</script>

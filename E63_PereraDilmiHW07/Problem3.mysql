@@ -1,0 +1,12 @@
+CREATE TABLE `patent` (
+  `Citing` int(45) DEFAULT NULL,
+  `Cited` int(45) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+LOAD DATA LOCAL INFILE 'C:\\Users\\Dilmi\\Documents\\Big Data Analytics\\cite75_99.txt' INTO 
+TABLE test.patent COLUMNS
+        TERMINATED BY ',' IGNORE 1 LINES;
+
+SELECT test.patent.Cited, group_concat(test.patent.Citing)
+    FROM  test.patent 
+	GROUP BY test.patent.Cited ORDER BY Cited ASC;

@@ -1,0 +1,16 @@
+CREATE TABLE `test`.`citedtocitingcount` (
+  `Cited` int(11) NOT NULL,
+  `CitingCount` int(20) DEFAULT NULL,
+  PRIMARY KEY (`Cited`)
+);
+
+Insert into test.CitedToCitingCount
+SELECT test.patent.Cited,count(test.patent.Citing)
+    FROM  test.patent 
+	GROUP BY test.patent.Cited;
+
+SELECT CitingCount , COUNT(*) as count FROM test.CitedToCitingCount
+	 GROUP BY CitingCount ORDER BY count DESC;
+
+SELECT CitingCount , COUNT(*) as count FROM test.CitedToCitingCount
+	 GROUP BY CitingCount ORDER BY count ASC;
